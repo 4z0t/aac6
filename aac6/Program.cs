@@ -14,14 +14,13 @@ class Program
     public static void Main(string[] args)
     {
         var input = @"
-        <block>
-            <coloumn> Hello world </coloumn>
+        <block rows = 3 columns = 3>
+            <column halign = top> Hello world 1 232 3 23   . - * + </column>
         </block>
             ";
         var tokenizer = new Tokenizer();
         var r = tokenizer.Tokenize(input);
-        var stack = new Stack<Token>(r);
-        r.Reverse();
+        var stack = new Stack<Token>(r.Reverse());
         PrintStack(stack);
     }
 }

@@ -9,7 +9,7 @@ public class Tokenizer
     public IEnumerable<Token> Tokenize(string code)
     {
         var allRules = Rules.GetAllRules();
-        var regexPattern = string.Join("|", allRules.Select(x =>$"({x})"));
+        var regexPattern = string.Join("|", allRules.Select(x => $"({x})"));
         Console.WriteLine(regexPattern);
         var regex = Regex.Matches(code, regexPattern, RegexOptions.Singleline);
 
@@ -21,7 +21,7 @@ public class Tokenizer
             if (Rules.Bracket.Contains(token)) { yield return new Token(token, TokenType.Bracket); continue; }
             if (Rules.Element.Contains(token)) { yield return new Token(token, TokenType.Element); continue; }
             if (Rules.Attributes.Contains(token)) { yield return new Token(token, TokenType.Attribute); continue; }
-            if (Rules.Equal == (token)) { yield return new Token(token, TokenType.Equal); continue; }
+            if (Rules.Equal == token) { yield return new Token(token, TokenType.Equal); continue; }
             if (Regex.Match(token, Rules.Character).Success) { yield return new Token(token, TokenType.Character); continue; }
 
 

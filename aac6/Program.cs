@@ -24,11 +24,8 @@ class Program
     public static List<Token> ScanTokens(IEnumerable<Token> tokens)
     {
         ScanState state = ScanState.ChildrenDefinition;
-        var result = new List<Token>();
-
-        Token textToken = null;
-
-        string text = null;
+        List<Token> result = new();
+        string? text = null;
         foreach (var token in tokens)
         {
             switch (state)
@@ -41,15 +38,15 @@ class Program
                                 {
                                     result.Add(token);
                                     state = ScanState.ChildrenDefinition;
-                                    break;
                                 }
-                            case TokenType.Space: continue;
+                                break;
+                            case TokenType.Space:
+                                continue;
                             default:
                                 {
                                     result.Add(token);
-                                    break;
                                 }
-
+                                break;
                         }
                         break;
                     }
@@ -64,24 +61,22 @@ class Program
                                     text = null;
                                     result.Add(token);
                                     state = ScanState.ElementDefinition;
-                                    break;
                                 }
+                                break;
                             case TokenType.Space:
                                 {
                                     if (text != null)
                                         text += token.TokenString;
-                                    break;
                                 }
+                                break;
                             default:
                                 {
                                     if (text != null)
                                         text += token.TokenString;
                                     else
                                         text = token.TokenString;
-                                    break;
                                 }
-
-
+                                break;
                         }
 
                         break;
@@ -99,7 +94,12 @@ class Program
         var input = @"
         <block rows = 3 columns = 3>
             Hellosad as d dsa d 
-            <column  halign = top> Hello block rows =5 world 1 232 3 23   . - * + </column>
+            <
+
+            column  halign = top
+
+
+            > Hello block rows =5 world 1 232 3 23   . - * + </column>
             World  sadas  adas 
         </block>
             ";

@@ -66,20 +66,21 @@ class Program
                                     state = ScanState.ElementDefinition;
                                     break;
                                 }
-                            case TokenType.Character:
+                            case TokenType.Space:
                                 {
                                     if (text != null)
                                         text += token.TokenString;
-                                        else
-                                        text = token.TokenString;
                                     break;
                                 }
                             default:
                                 {
                                     if (text != null)
                                         text += token.TokenString;
+                                    else
+                                        text = token.TokenString;
                                     break;
                                 }
+
 
                         }
 
@@ -98,7 +99,7 @@ class Program
         var input = @"
         <block rows = 3 columns = 3>
             Hellosad as d dsa d 
-            <column  halign = top> Hello world 1 232 3 23   . - * + </column>
+            <column  halign = top> Hello block rows =5 world 1 232 3 23   . - * + </column>
             World  sadas  adas 
         </block>
             ";

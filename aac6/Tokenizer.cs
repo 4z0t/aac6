@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace EMark;
 public class Tokenizer
 {
     public IEnumerable<Token> Tokenize(string code)
+    {
+        return ScanTokens(SplitOnTokens(code));
+    }
+
+    private IEnumerable<Token> SplitOnTokens(string code)
     {
         var allRules = Rules.GetAllRules();
         var regexPattern = string.Join("|", allRules.Select(x => $"({x})"));
@@ -25,6 +31,80 @@ public class Tokenizer
             if (Regex.Match(token, Rules.Character).Success) { yield return new Token(token, TokenType.Character); continue; }
 
 
+        }
+    }
+
+
+    enum ScanState
+    {
+        ElementDefinition,
+        ChildrenDefinition
+    }
+
+
+    private IEnumerable<Token> ScanTokens(IEnumerable<Token> tokens)
+    {
+        ScanState state = ScanState.ChildrenDefinition;
+        List<Token> result = new();
+        string? text = null;
+        foreach (var token in tokens)
+        {
+            switch (state)
+            {
+                case ScanState.ElementDefinition:
+                    {
+                        switch (token.Type)
+                        {
+                            case TokenType.Bracket:
+                                {
+                                    yield return token;
+                                    state = ScanState.ChildrenDefinition;
+                                }
+                                break;
+                            case TokenType.Space:
+                                continue;
+                            default:
+                                {
+                                    yield return token;
+                                }
+                                break;
+                        }
+                        break;
+                    }
+                case ScanState.ChildrenDefinition:
+                    {
+                        switch (token.Type)
+                        {
+                            case TokenType.Bracket:
+                                {
+                                    if (text != null)
+                                        yield return new Token(text.Trim(), TokenType.Text);
+                                    text = null;
+                                    yield return token;
+                                    state = ScanState.ElementDefinition;
+                                }
+                                break;
+                            case TokenType.Space:
+                                {
+                                    if (text != null)
+                                        text += token.TokenString;
+                                }
+                                break;
+                            default:
+                                {
+                                    if (text != null)
+                                        text += token.TokenString;
+                                    else
+                                        text = token.TokenString;
+                                }
+                                break;
+                        }
+
+                        break;
+                    }
+                default:
+                    break;
+            }
         }
     }
 

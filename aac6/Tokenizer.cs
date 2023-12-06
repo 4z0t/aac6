@@ -18,8 +18,8 @@ public class Tokenizer
             string token = item.Value;
 
             if (string.IsNullOrWhiteSpace(token)) { yield return new Token(token, TokenType.Space); continue; }
-            if (Rules.ElementSep.Contains(token)) { yield return new Token(token, TokenType.ElementSep); continue; }
-            if (Rules.Syntaxis.Contains(token)) { yield return new Token(token, TokenType.Syntaxis); continue; }
+            if (Rules.Bracket.Contains(token)) { yield return new Token(token, TokenType.Bracket); continue; }
+            if (Rules.Element.Contains(token)) { yield return new Token(token, TokenType.Element); continue; }
             if (Rules.Attributes.Contains(token)) { yield return new Token(token, TokenType.Attribute); continue; }
             if (Rules.Equal == (token)) { yield return new Token(token, TokenType.Equal); continue; }
             if (Regex.Match(token, Rules.Character).Success) { yield return new Token(token, TokenType.Character); continue; }
@@ -33,11 +33,11 @@ public class Tokenizer
         static Rules()
         {
             Attributes = new[] { "rows", "columns", "bgcolor", "width", "height", "valign", "halign", "textcolor" };
-            ElementSep = "</>".Select(x => x.ToString()).ToArray();
+            Bracket = new[] { "</", ">", "<" };
             Character = "[^<>\\s]+";
             Equal = "=";
             Space = "[\n\r\t ]+";
-            Syntaxis = new[] { "block", "column", "row" };
+            Element = new[] { "block", "column", "row" };
         }
 
         public static IEnumerable<string> GetAllRules()
@@ -46,8 +46,8 @@ public class Tokenizer
 
             list.AddRange(Attributes);
             list.Add(Equal);
-            list.AddRange(Syntaxis);
-            list.AddRange(ElementSep);
+            list.AddRange(Element);
+            list.AddRange(Bracket);
             list.Add(Character);
             list.Add(Space);
             return list;
@@ -57,23 +57,25 @@ public class Tokenizer
         public static string Character { get; }
         public static string Equal { get; }
         public static string Space { get; }
-        public static string[] Syntaxis { get; }
+        public static string[] Element { get; }
         public static string[] Attributes { get; }
-        public static string[] ElementSep { get; }
+        public static string[] Bracket { get; }
     }
 
-    public enum TokenType
-    {
-        Character,
-        Attribute,
-        Equal,
-        Space,
-        Syntaxis,
-        ElementSep
-    }
+
 }
 
 
+public enum TokenType
+{
+    Character,
+    Attribute,
+    Equal,
+    Space,
+    Element,
+    Bracket,
+    Text
+}
 
 public class Token
 {

@@ -7,10 +7,7 @@ using System.Text.RegularExpressions;
 namespace EMark;
 public class Tokenizer
 {
-    public IEnumerable<Token> Tokenize(string code)
-    {
-        return ScanTokens(SplitOnTokens(code));
-    }
+    public IEnumerable<Token> Tokenize(string code) => ScanTokens(SplitOnTokens(code));
 
     private IEnumerable<Token> SplitOnTokens(string code)
     {

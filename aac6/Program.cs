@@ -32,5 +32,16 @@ public class Program
         var r = tokenizer.Tokenize(input);
         var stack = new Stack<Token>(r.Reverse());
         PrintStack(stack);
+
+        var block = new Block(1, 0, new[]
+        {
+            new View(2,0, new []
+            {
+                new View(1,0, "Hello EMark")
+            }),
+            new View(1, 1)
+
+        });
+        Console.WriteLine(block.ToString());
     }
 }

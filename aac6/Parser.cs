@@ -9,19 +9,22 @@ namespace EMark
 
     public class Block
     {
-        public Block(int columns, int rows)
+        public Block(Block parent, int columns, int rows)
         {
             Columns = columns;
             Rows = rows;
             Children = new List<Block>();
+            Parent = parent;
         }
 
-        public Block(int columns, int rows, Block[] children)
+        public Block(Block parent, int columns, int rows, Block[] children)
         {
             Columns = columns;
             Rows = rows;
             Children = new(children);
+            Parent = parent;
         }
+        public Block Parent { get; set; }
 
         public int Rows { get; set; }
         public int Columns { get; set; }
@@ -53,15 +56,15 @@ namespace EMark
 
     public class View : Block
     {
-        public View(int columns, int rows) : base(columns, rows)
+        public View(Block parent, int columns, int rows) : base(parent, columns, rows)
         {
         }
 
-        public View(int columns, int rows, Block[] children) : base(columns, rows, children)
+        public View(Block parent, int columns, int rows, Block[] children) : base(parent, columns, rows, children)
         {
         }
 
-        public View(int columns, int rows, string text) : base(columns, rows)
+        public View(Block parent, int columns, int rows, string text) : base(parent, columns, rows)
         {
             Text = text;
         }
@@ -82,12 +85,58 @@ namespace EMark
         }
     }
 
+    public class InvalidTokensException : Exception
+    {
+        public InvalidTokensException(string reason) : base(reason)
+        {
 
+        }
+        public InvalidTokensException() : base()
+        {
+
+        }
+    }
     public class Parser
     {
         public Parser()
         {
 
+        }
+
+        public Dictionary<string, string> ProcessAttributes(Stack<Token> tokens)
+        {
+            Dictionary<string, string> result = new();
+            string? key = null;
+
+            return result;
+        }
+
+        public Block MakeElement(Block parent, string type, Dictionary<string, string> attributes)
+        {
+            return null;
+        }
+
+        public Block Process(Block parent, Stack<Token> tokens)
+        {
+            if (tokens.Peek().Type != TokenType.Bracket)
+                throw new InvalidTokensException("Expected Bracket during element process");
+            if (tokens.Peek().TokenString != "<")
+                throw new InvalidTokensException("Expected starting bracket during element process");
+            tokens.Pop();
+            if (tokens.Peek().Type != TokenType.Element)
+                throw new InvalidTokensException("Expected element token type");
+            var type = tokens.Pop().TokenString;
+            var attributes = ProcessAttributes(tokens);
+            var element = MakeElement(type, attributes);
+            if (tokens.Peek().Type != TokenType.Bracket || tokens.Peek().TokenString != ">")
+                throw new InvalidTokensException("Expected ending bracket here");
+            tokens.Pop();
+
+
+
+
+
+            return element;
         }
 
         public Block Parse(Stack<Token> tokens)

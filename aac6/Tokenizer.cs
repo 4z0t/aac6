@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static Tokenizer;
 
+namespace EMark;
 public class Tokenizer
 {
     public IEnumerable<Token> Tokenize(string code)

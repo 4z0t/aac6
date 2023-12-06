@@ -1,6 +1,6 @@
 ﻿
-
-class Program
+namespace EMark;
+public class Program
 {
     private static void PrintStack(Stack<Token> stack)
     {

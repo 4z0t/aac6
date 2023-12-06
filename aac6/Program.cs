@@ -27,6 +27,8 @@ class Program
         var result = new List<Token>();
 
         Token textToken = null;
+
+        string text = null;
         foreach (var token in tokens)
         {
             switch (state)
@@ -57,13 +59,25 @@ class Program
                         {
                             case TokenType.Bracket:
                                 {
+                                    if (text != null)
+                                        result.Add(new Token(text.Trim(), TokenType.Text));
+                                    text = null;
                                     result.Add(token);
                                     state = ScanState.ElementDefinition;
                                     break;
                                 }
+                            case TokenType.Character:
+                                {
+                                    if (text != null)
+                                        text += token.TokenString;
+                                        else
+                                        text = token.TokenString;
+                                    break;
+                                }
                             default:
                                 {
-                                    result.Add(token);
+                                    if (text != null)
+                                        text += token.TokenString;
                                     break;
                                 }
 
@@ -83,7 +97,9 @@ class Program
     {
         var input = @"
         <block rows = 3 columns = 3>
-            <column halign = top> Hello world 1 232 3 23   . - * + </column>
+            Hellosad as d dsa d 
+            <column  halign = top> Hello world 1 232 3 23   . - * + </column>
+            World  sadas  adas 
         </block>
             ";
         var tokenizer = new Tokenizer();

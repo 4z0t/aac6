@@ -111,9 +111,21 @@ namespace App
             txt8.FontWeight = FontWeights.Bold;
             txt8.Text = "Total Units: " + (db1 + db2 + db3).ToString();
             Grid.SetRow(txt8, 3);
-            Grid.SetColumnSpan(txt8, 3);
+            Grid.SetColumn(txt8, 3);
+            txt8.HorizontalAlignment = HorizontalAlignment.Center;
 
             // Add the TextBlock elements to the Grid Children collection
+            
+
+            Grid childGrid = new Grid();
+            //childGrid.Width = 20;
+            //childGrid.Height = 10;
+            childGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            childGrid.VerticalAlignment = VerticalAlignment.Stretch;
+            childGrid.Background = new SolidColorBrush(Colors.Black);
+            Grid.SetColumn(childGrid, 1);
+            Grid.SetRow(childGrid, 3);
+
             grid.Children.Add(txt1);
             grid.Children.Add(txt2);
             grid.Children.Add(txt3);
@@ -122,6 +134,8 @@ namespace App
             grid.Children.Add(txt6);
             grid.Children.Add(txt7);
             grid.Children.Add(txt8);
+            grid.Children.Add(childGrid);
+            grid.Background = new SolidColorBrush(Colors.Bisque);
 
             this.Content = grid;
         }

@@ -58,6 +58,11 @@ namespace EMark
         {
             Children.Add(child);
         }
+
+        public virtual void SetAttributes(Dictionary<string, string> attributes)
+        {
+
+        }
     }
 
     public class View : Block
@@ -87,7 +92,7 @@ namespace EMark
 
         public override string Header()
         {
-            return $"<view columns={Columns} rows={Rows}{(VAlign != null ? $" valign={VAlign}" : "")}{(HAlign != null ? $" halign={HAlign}" : "")}{(TextColor == null ? "" : $" textcolor={TextColor}")}>{(Text == null ? "" : $" {Text}")}";
+            return $"<{Type} columns={Columns} rows={Rows}{(VAlign != null ? $" valign={VAlign}" : "")}{(HAlign != null ? $" halign={HAlign}" : "")}{(TextColor == null ? "" : $" textcolor={TextColor}")}>{(Text == null ? "" : $" {Text}")}";
         }
     }
 
@@ -143,13 +148,24 @@ namespace EMark
         public Block MakeElement(Block parent, string type, Dictionary<string, string> attributes)
         {
             Console.WriteLine(type);
-            foreach (var (key, value) in attributes)
-            {
-                Console.WriteLine($"{key}:{value}");
-            }
+            //foreach (var (key, value) in attributes)
+            //{
+            //    Console.WriteLine($"{key}:{value}");
+            //}
             if (type == "block")
-                return new Block(parent, 0, 0);
-            return new View(parent, 0, 0);
+            {
+                var block = new Block(parent, 0, 0);
+                block.SetAttributes(attributes);
+                block.Type = "block";
+                return block;
+            }
+            else
+            {
+                var block = new View(parent, 0, 0);
+                block.SetAttributes(attributes);
+                block.Type = type;
+                return block;
+            }
         }
 
         public List<Block> MakeChildren(Block parent, Stack<Token> tokens)
@@ -212,8 +228,14 @@ namespace EMark
 
         public Block Parse(Stack<Token> tokens)
         {
+            Block = Process(null, tokens);
+            ValidateTree(Block);
+            return Block;
+        }
 
-            return Process(null, tokens);
+        private void ValidateTree(Block block)
+        {
+
         }
 
         private Block Block { get; set; }

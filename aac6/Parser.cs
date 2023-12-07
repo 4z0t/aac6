@@ -30,6 +30,8 @@ namespace EMark
         public int Columns { get; set; }
         public List<Block> Children { get; set; }
 
+        public string Type { get; set; }
+
         public virtual string Header()
         {
             return $"<block columns={Columns} rows={Rows}>";
@@ -39,10 +41,14 @@ namespace EMark
         {
             string result = new('\t', level);
             result += $"{Header()}\n";
-            foreach (var item in Children)
+            if (Children != null)
             {
-                result += item.ToStringTree(level + 1);
+                foreach (var item in Children)
+                {
+                    result += item.ToStringTree(level + 1);
+                }
             }
+
             return result;
         }
 
@@ -107,34 +113,99 @@ namespace EMark
         {
             Dictionary<string, string> result = new();
             string? key = null;
+            bool wasEqual = false;
+            while (tokens.Peek().Type != TokenType.Bracket)
+            {
+                if (key == null)
+                {
+                    if (tokens.Peek().Type != TokenType.Attribute) throw new InvalidTokensException("Expected attribute");
+                    key = tokens.Pop().TokenString;
+                }
+                else if (!wasEqual)
+                {
+                    if (tokens.Peek().Type != TokenType.Equal) throw new InvalidTokensException("Expected equal operator");
+                    tokens.Pop();
+                    wasEqual = true;
+                }
+                else
+                {
+                    result.Add(key, tokens.Pop().TokenString);
+                    key = null;
+                    wasEqual = false;
+                }
 
+            }
+            if (wasEqual || key != null)
+                throw new InvalidTokensException("Premature end of attributes definition");
             return result;
         }
 
         public Block MakeElement(Block parent, string type, Dictionary<string, string> attributes)
         {
-            return null;
+            Console.WriteLine(type);
+            foreach (var (key, value) in attributes)
+            {
+                Console.WriteLine($"{key}:{value}");
+            }
+            if (type == "block")
+                return new Block(parent, 0, 0);
+            return new View(parent, 0, 0);
+        }
+
+        public List<Block> MakeChildren(Block parent, Stack<Token> tokens)
+        {
+            if (tokens.Peek().Type == TokenType.Text)
+            {
+                if (parent is not View view)
+                    throw new InvalidTokensException("Block can't have a text");
+                view.Text = tokens.Pop().TokenString;
+                return null;
+            }
+            List<Block> result = new();
+            var type = parent.Type;
+
+            while (tokens.Peek().TokenString != "</")
+            {
+                result.Add(Process(parent, tokens));
+            }
+
+            return result;
+        }
+
+
+        private void CheckBracket(Stack<Token> tokens, string b)
+        {
+            if (tokens.Peek().Type != TokenType.Bracket)
+                throw new InvalidTokensException("Expected bracket during element process");
+            if (tokens.Peek().TokenString != b)
+                throw new InvalidTokensException("Expected bracket during element process");
         }
 
         public Block Process(Block parent, Stack<Token> tokens)
         {
-            if (tokens.Peek().Type != TokenType.Bracket)
-                throw new InvalidTokensException("Expected Bracket during element process");
-            if (tokens.Peek().TokenString != "<")
-                throw new InvalidTokensException("Expected starting bracket during element process");
+            CheckBracket(tokens, "<");
             tokens.Pop();
             if (tokens.Peek().Type != TokenType.Element)
                 throw new InvalidTokensException("Expected element token type");
+
             var type = tokens.Pop().TokenString;
             var attributes = ProcessAttributes(tokens);
-            var element = MakeElement(type, attributes);
+            var element = MakeElement(parent, type, attributes);
+
             if (tokens.Peek().Type != TokenType.Bracket || tokens.Peek().TokenString != ">")
                 throw new InvalidTokensException("Expected ending bracket here");
             tokens.Pop();
 
+            element.Children = MakeChildren(element, tokens);
 
-
-
+            CheckBracket(tokens, "</");
+            tokens.Pop();
+            if (tokens.Peek().Type != TokenType.Element)
+                throw new InvalidTokensException("Expected element token type");
+            if (type != tokens.Pop().TokenString)
+                throw new InvalidTokensException("Expected element end to be equal to start");
+            CheckBracket(tokens, ">");
+            tokens.Pop();
 
             return element;
         }
@@ -142,7 +213,7 @@ namespace EMark
         public Block Parse(Stack<Token> tokens)
         {
 
-            return Block;
+            return Process(null, tokens);
         }
 
         private Block Block { get; set; }

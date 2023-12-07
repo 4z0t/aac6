@@ -16,6 +16,7 @@ public class Program
 
     public static void Main(string[] args)
     {
+        /*
         var input = @"
         <block rows = 3 columns = 3>
             Hellosad as d dsa d 
@@ -43,5 +44,30 @@ public class Program
 
         });
         Console.WriteLine(block.ToString());
+        */
+        var input = @"
+        <block rows = 3 columns = 3>
+            <row>
+                Hellosad as d dsa d
+            </row>
+            <row>
+                world
+            </row>
+            <row>
+                <column>
+                    EWWWWWWWW
+                </column>
+            </row>
+        </block>";
+
+        var tokenizer = new Tokenizer();
+        var r = tokenizer.Tokenize(input);
+        var stack = new Stack<Token>(r.Reverse());
+
+        var parser = new Parser();
+
+        var block = parser.Parse(stack);
+        Console.WriteLine(block);
+
     }
 }

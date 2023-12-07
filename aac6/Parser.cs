@@ -173,7 +173,7 @@ namespace EMark
             if (tokens.Peek().Type == TokenType.Text)
             {
                 if (parent is not View view)
-                    throw new InvalidTokensException("Block can't have a text");
+                    throw new InvalidTokensException("Block can't have a text in it");
                 view.Text = tokens.Pop().TokenString;
                 return null;
             }
@@ -237,6 +237,8 @@ namespace EMark
         {
 
         }
+
+
 
         private Block Block { get; set; }
 

@@ -13,7 +13,7 @@ public class Tokenizer
     {
         var allRules = Rules.GetAllRules();
         var regexPattern = string.Join("|", allRules.Select(x => $"({x})"));
-        Console.WriteLine(regexPattern);
+        //Console.WriteLine(regexPattern);
         var regex = Regex.Matches(code, regexPattern, RegexOptions.Singleline);
 
         foreach (Match item in regex)

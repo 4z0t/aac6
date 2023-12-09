@@ -147,23 +147,27 @@ namespace EMark
 
         public Block MakeElement(Block parent, string type, Dictionary<string, string> attributes)
         {
-            Console.WriteLine(type);
+            //Console.WriteLine(type);
             //foreach (var (key, value) in attributes)
             //{
             //    Console.WriteLine($"{key}:{value}");
             //}
             if (type == "block")
             {
-                var block = new Block(parent, 0, 0);
+                var block = new Block(parent, 0, 0)
+                {
+                    Type = "block"
+                };
                 block.SetAttributes(attributes);
-                block.Type = "block";
                 return block;
             }
             else
             {
-                var block = new View(parent, 0, 0);
+                var block = new View(parent, 0, 0)
+                {
+                    Type = type
+                };
                 block.SetAttributes(attributes);
-                block.Type = type;
                 return block;
             }
         }
@@ -194,7 +198,7 @@ namespace EMark
             if (tokens.Peek().Type != TokenType.Bracket)
                 throw new InvalidTokensException("Expected bracket during element process");
             if (tokens.Peek().TokenString != b)
-                throw new InvalidTokensException("Expected bracket during element process");
+                throw new InvalidTokensException($"Expected bracket '{b}' but  got '{tokens.Peek().TokenString}'");
         }
 
         public Block Process(Block parent, Stack<Token> tokens)
@@ -208,8 +212,7 @@ namespace EMark
             var attributes = ProcessAttributes(tokens);
             var element = MakeElement(parent, type, attributes);
 
-            if (tokens.Peek().Type != TokenType.Bracket || tokens.Peek().TokenString != ">")
-                throw new InvalidTokensException("Expected ending bracket here");
+            CheckBracket(tokens, ">");
             tokens.Pop();
 
             element.Children = MakeChildren(element, tokens);
@@ -228,8 +231,15 @@ namespace EMark
 
         public Block Parse(Stack<Token> tokens)
         {
-            Block = Process(null, tokens);
-            ValidateTree(Block);
+            try
+            {
+                Block = Process(null, tokens);
+                ValidateTree(Block);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
             return Block;
         }
 

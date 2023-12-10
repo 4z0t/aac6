@@ -28,7 +28,7 @@ namespace EMark
 
         public int Rows { get; set; }
         public int Columns { get; set; }
-        public List<Block> Children { get; set; }
+        public List<Block>? Children { get; set; }
 
         public string Type { get; set; }
 
@@ -56,9 +56,20 @@ namespace EMark
 
         public void AddChild(Block child) => Children.Add(child);
 
+
+        public static readonly string[] ValidAttributes = new[] { "rows", "columns" };
+
         public virtual void SetAttributes(Dictionary<string, string> attributes)
         {
-
+            foreach (var (attribute, value) in attributes)
+            {
+                if (!ValidAttributes.Contains(attribute))
+                {
+                    throw new Exception($"Invalid attribute {attribute}");
+                }
+                if (attribute == "rows") Rows = int.Parse(value);
+                if (attribute == "columns") Columns = int.Parse(value);
+            }
         }
     }
 
@@ -86,6 +97,26 @@ namespace EMark
         public int Width { get; set; }
         public int Height { get; set; }
 
+
+        public static new readonly string[] ValidAttributes = new[] { "rows", "columns", "valign", "halign", "textcolor", "width", "height" };
+
+        public override void SetAttributes(Dictionary<string, string> attributes)
+        {
+            foreach (var (attribute, value) in attributes)
+            {
+                if (!ValidAttributes.Contains(attribute))
+                {
+                    throw new Exception($"Invalid attribute {attribute}");
+                }
+                if (attribute == "rows") Rows = int.Parse(value);
+                if (attribute == "columns") Columns = int.Parse(value);
+                if (attribute == "width") Width = int.Parse(value);
+                if (attribute == "height") Height = int.Parse(value);
+                if (attribute == "textcolor") TextColor = value;
+                if (attribute == "valign") VAlign = value;
+                if (attribute == "halign") HAlign = value;
+            }
+        }
 
         public override string Header()
         {
@@ -169,7 +200,7 @@ namespace EMark
             }
         }
 
-        public List<Block> MakeChildren(Block parent, Stack<Token> tokens)
+        public List<Block>? MakeChildren(Block parent, Stack<Token> tokens)
         {
             if (tokens.Peek().Type == TokenType.Text)
             {

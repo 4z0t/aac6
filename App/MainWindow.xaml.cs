@@ -25,13 +25,22 @@ namespace App
 
         public string EMARKS = @"
         <block rows = 3>
-            <row valign=center>
+            <row valign=center halign=center height = 20>
                 Hellosad as d dsa d
             </row>
-            <row>
-                world
+            <row columns = 2 halign=center valign=bottom height=100>
+                <column valign = bottom width = 100>
+                    <block rows=1>
+                        <row halign= left>
+                            col 1
+                        </row>
+                    </block>
+                </column>
+                <column valign=center>
+                    col 2
+                </column>
             </row>
-            <row valign=bottom>
+            <row valign=bottom halign=right>
                     EWWWWWWWW
                
             </row>
@@ -40,32 +49,42 @@ namespace App
         public Grid RenderBlock(BaseBlock block)
         {
             Grid grid = new Grid();
+            grid.ShowGridLines = true;
+
+            if (block.Rows != 0)
+            {
+                for (int i = 0; i < block.Rows; i++)
+                {
+                    grid.RowDefinitions.Add(new RowDefinition());
+                }
+            }
+            else if (block.Columns != 0)
+            {
+                for (int i = 0; i < block.Columns; i++)
+                {
+                    grid.ColumnDefinitions.Add(new ColumnDefinition());
+                }
+            }
+            //else
+            //    throw new Exception("block must have at least one set of rows or columns");
             if (block.Type == "block")
             {
-                grid.VerticalAlignment = VerticalAlignment.Stretch;
-                grid.HorizontalAlignment = HorizontalAlignment.Stretch;
-                if (block.Rows != 0)
-                {
-                    for (int i = 0; i < block.Rows; i++)
-                    {
-                        grid.RowDefinitions.Add(new RowDefinition());
-                    }
-                }
-                else if (block.Columns != 0)
-                {
-                    for (int i = 0; i < block.Columns; i++)
-                    {
-                        grid.ColumnDefinitions.Add(new ColumnDefinition());
-                    }
-                }
-                else
-                    throw new Exception("block must have at least one set of rows or columns");
+                grid.HorizontalAlignment = HorizontalAlignment.Center;
+                grid.VerticalAlignment = VerticalAlignment.Center;
             }
             else
             {
                 View view = block as View;
                 string valign = view.VAlign;
                 string halign = view.HAlign;
+                if (view.Type == "row" && view.Height != 0)
+                {
+                    grid.Height = view.Height;
+                }
+                else if (view.Type == "column" && view.Width != 0)
+                {
+                    grid.Width = view.Width;
+                }
                 switch (valign)
                 {
                     case "top":

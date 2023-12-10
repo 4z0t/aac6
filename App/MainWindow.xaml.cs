@@ -40,11 +40,27 @@ namespace App
                     col 2
                 </column>
             </row>
-            <row valign=bottom halign=right>
+            <row valign=bottom halign=right textcolor=red bgcolor=black>
                     EWWWWWWWW
                
             </row>
         </block>";
+
+        public Color StringToColor(string str)
+        {
+            switch (str.ToLower())
+            {
+                case "black":
+                    return Colors.Black;
+                case "red":
+                    return Colors.Red;
+                case "blue":
+                    return Colors.Blue;
+                case "green":
+                    return Colors.Green;
+                default: return Colors.White;
+            }
+        }
 
         public Grid RenderBlock(BaseBlock block)
         {
@@ -119,9 +135,20 @@ namespace App
                     text.Text = view.Text;
                     text.FontSize = 12;
                     text.FontWeight = FontWeights.Bold;
+
+                    if (view.TextColor != null)
+                    {
+                        text.Foreground = new SolidColorBrush(StringToColor(view.TextColor));
+                    }
+
                     grid.Children.Add(text);
                 }
+                if(view.BGColor != null)
+                {
+                    grid.Background = new SolidColorBrush(StringToColor(view.BGColor));
+                }
             }
+
             int index = 0;
             if (block.Children != null)
             {

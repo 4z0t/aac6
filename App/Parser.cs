@@ -100,7 +100,7 @@ namespace EMark
         public int Height { get; set; } = 0;
 
 
-        public static new readonly string[] ValidAttributes = new[] { "rows", "columns", "valign", "halign", "textcolor", "width", "height" };
+        public static new readonly string[] ValidAttributes = new[] { "rows", "columns", "valign", "halign", "textcolor", "bgcolor", "width", "height" };
 
         public override void SetAttributes(Dictionary<string, string> attributes)
         {
@@ -117,6 +117,7 @@ namespace EMark
                 if (attribute == "width") Width = int.Parse(value);
                 if (attribute == "height") Height = int.Parse(value);
                 if (attribute == "textcolor") TextColor = value;
+                if (attribute == "bgcolor") BGColor = value;
                 if (attribute == "valign") VAlign = value;
                 if (attribute == "halign") HAlign = value;
             }

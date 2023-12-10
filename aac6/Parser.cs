@@ -54,10 +54,7 @@ namespace EMark
 
         public override string ToString() => ToStringTree(0);
 
-        public void AddChild(Block child)
-        {
-            Children.Add(child);
-        }
+        public void AddChild(Block child) => Children.Add(child);
 
         public virtual void SetAttributes(Dictionary<string, string> attributes)
         {
@@ -196,7 +193,7 @@ namespace EMark
         private void CheckBracket(Stack<Token> tokens, string b)
         {
             if (tokens.Peek().Type != TokenType.Bracket)
-                throw new InvalidTokensException("Expected bracket during element process");
+                throw new InvalidTokensException($"Expected bracket during element process, but got {tokens.Peek().Type}");
             if (tokens.Peek().TokenString != b)
                 throw new InvalidTokensException($"Expected bracket '{b}' but  got '{tokens.Peek().TokenString}'");
         }

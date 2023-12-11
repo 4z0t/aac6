@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace App
 {
@@ -124,9 +129,7 @@ namespace App
             {
                 for (int i = 0; i < block.Rows; i++)
                 {
-                    RowDefinition r = new RowDefinition();
-                    //r.Height = new GridLength(100);
-                    grid.RowDefinitions.Add(r);
+                    grid.RowDefinitions.Add(new RowDefinition());
                 }
             }
             else if (block.Columns != 0)
@@ -150,16 +153,6 @@ namespace App
                 string halign = view.HAlign;
                 context.HAlignFromString(halign);
                 context.VAlignFromString(valign);
-
-                //if (view.Type == "row" && view.Height != 0)
-                //{
-                //    grid.Height = view.Height;
-                //}
-                //else if (view.Type == "column" && view.Width != 0)
-                //{
-                //    grid.Width = view.Width;
-                //}
-
 
                 if (view.Text != null)
                 {
@@ -216,15 +209,13 @@ namespace App
             return grid;
         }
 
-        public MainWindow()
+        public void Update(string text)
         {
-            InitializeComponent();
-
             Tokenizer tokenizer = new Tokenizer();
-            Stack<Token> tokens = new Stack<Token>(tokenizer.Tokenize(EMARKS).Reverse());
+            Stack<Token> tokens = new Stack<Token>(tokenizer.Tokenize(text).Reverse());
+            EMark.Children.Clear();
             try
             {
-
                 Parser parser = new Parser();
                 BaseBlock block = parser.Process(null, tokens);
                 Console.WriteLine(block);
@@ -233,20 +224,40 @@ namespace App
                 grid.VerticalAlignment = VerticalAlignment.Top;
                 grid.Width = 800;
                 grid.Height = 240;
-                this.Content = grid;
+                EMark.Children.Add(grid);
             }
             catch (Exception ex)
             {
-
                 TextBlock info = new TextBlock();
                 info.HorizontalAlignment = HorizontalAlignment.Center;
                 info.VerticalAlignment = VerticalAlignment.Center;
                 info.FontSize = 20;
                 info.FontWeight = FontWeights.Bold;
                 info.Text = ex.ToString();
-                this.Content = info;
+                EMark.Children.Add(info);
             }
+        }
 
+        public MainWindow()
+        {
+            InitializeComponent();
+           
+            File.Open("file.txt", FileMode.OpenOrCreate).Close();
+            Program.Text = File.ReadAllText("file.txt");
+            Closing += (s, e) => File.WriteAllText("file.txt", Program.Text);
+            Program.TextChanged += Program_TextChanged;
+        }
+
+
+
+        private void Program_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Update(Program.Text);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Update(Program.Text);
         }
     }
 }

@@ -143,7 +143,7 @@ namespace App
 
                     grid.Children.Add(text);
                 }
-                if(view.BGColor != null)
+                if (view.BGColor != null)
                 {
                     grid.Background = new SolidColorBrush(StringToColor(view.BGColor));
                 }
@@ -179,126 +179,27 @@ namespace App
 
             Tokenizer tokenizer = new Tokenizer();
             Stack<Token> tokens = new Stack<Token>(tokenizer.Tokenize(EMARKS).Reverse());
+            try
+            {
 
-            Parser parser = new Parser();
-            BaseBlock block = parser.Process(null, tokens);
-            Console.WriteLine(block);
-            Grid grid = RenderBlock(block);
-            //Grid grid = new Grid();
-            //grid.Width = 500;
-            //grid.Height = 300;
-            //grid.HorizontalAlignment = HorizontalAlignment.Left;
-            //grid.VerticalAlignment = VerticalAlignment.Top;
-            //grid.ShowGridLines = true;
+                Parser parser = new Parser();
+                BaseBlock block = parser.Process(null, tokens);
+                Console.WriteLine(block);
+                Grid grid = RenderBlock(block);
+                this.Content = grid;
+            }
+            catch (Exception ex)
+            {
 
-            //// Define the Columns
-            //ColumnDefinition colDef1 = new ColumnDefinition();
-            //ColumnDefinition colDef2 = new ColumnDefinition();
-            //ColumnDefinition colDef3 = new ColumnDefinition();
-            //grid.ColumnDefinitions.Add(colDef1);
-            //grid.ColumnDefinitions.Add(colDef2);
-            //grid.ColumnDefinitions.Add(colDef3);
+                TextBlock info = new TextBlock();
+                info.HorizontalAlignment = HorizontalAlignment.Center;
+                info.VerticalAlignment = VerticalAlignment.Center;
+                info.FontSize = 20;
+                info.FontWeight = FontWeights.Bold;
+                info.Text = ex.ToString();
+                this.Content = info;
+            }
 
-            //// Define the Rows
-            //RowDefinition rowDef1 = new RowDefinition();
-            //RowDefinition rowDef2 = new RowDefinition();
-            //RowDefinition rowDef3 = new RowDefinition();
-            //RowDefinition rowDef4 = new RowDefinition();
-            //grid.RowDefinitions.Add(rowDef1);
-            //grid.RowDefinitions.Add(rowDef2);
-            //grid.RowDefinitions.Add(rowDef3);
-            //grid.RowDefinitions.Add(rowDef4);
-
-
-            //// Add the first text cell to the Grid
-            //TextBlock txt1 = new TextBlock();
-            //txt1.Text = "2005 Products Shipped";
-            //txt1.FontSize = 20;
-            //txt1.FontWeight = FontWeights.Bold;
-            //Grid.SetColumnSpan(txt1, 3);
-            //Grid.SetRow(txt1, 0);
-
-            //// Add the second text cell to the Grid
-            //TextBlock txt2 = new TextBlock();
-            //txt2.Text = "Quarter 1";
-            //txt2.FontSize = 12;
-            //txt2.FontWeight = FontWeights.Bold;
-            //Grid.SetRow(txt2, 1);
-            //Grid.SetColumn(txt2, 0);
-
-            //// Add the third text cell to the Grid
-            //TextBlock txt3 = new TextBlock();
-            //txt3.Text = "Quarter 2";
-            //txt3.FontSize = 12;
-            //txt3.FontWeight = FontWeights.Bold;
-            //Grid.SetRow(txt3, 1);
-            //Grid.SetColumn(txt3, 1);
-
-            //// Add the fourth text cell to the Grid
-            //TextBlock txt4 = new TextBlock();
-            //txt4.Text = "Quarter 3";
-            //txt4.FontSize = 12;
-            //txt4.FontWeight = FontWeights.Bold;
-            //Grid.SetRow(txt4, 1);
-            //Grid.SetColumn(txt4, 2);
-
-            //// Add the sixth text cell to the Grid
-            //TextBlock txt5 = new TextBlock();
-            //Double db1 = new Double();
-            //db1 = 50000;
-            //txt5.Text = db1.ToString();
-            //Grid.SetRow(txt5, 2);
-            //Grid.SetColumn(txt5, 0);
-
-            //// Add the seventh text cell to the Grid
-            //TextBlock txt6 = new TextBlock();
-            //Double db2 = new Double();
-            //db2 = 100000;
-            //txt6.Text = db2.ToString();
-            //Grid.SetRow(txt6, 2);
-            //Grid.SetColumn(txt6, 1);
-
-            //// Add the final text cell to the Grid
-            //TextBlock txt7 = new TextBlock();
-            //Double db3 = new Double();
-            //db3 = 150000;
-            //txt7.Text = db3.ToString();
-            //Grid.SetRow(txt7, 2);
-            //Grid.SetColumn(txt7, 2);
-
-            //// Total all Data and Span Three Columns
-            //TextBlock txt8 = new TextBlock();
-            //txt8.FontSize = 16;
-            //txt8.FontWeight = FontWeights.Bold;
-            //txt8.Text = "Total Units: " + (db1 + db2 + db3).ToString();
-            //Grid.SetRow(txt8, 3);
-            //Grid.SetColumn(txt8, 3);
-            //txt8.HorizontalAlignment = HorizontalAlignment.Center;
-
-            //// Add the TextBlock elements to the Grid Children collection
-
-
-            //Grid childGrid = new Grid();
-            ////childGrid.Width = 20;
-            ////childGrid.Height = 10;
-            //childGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
-            //childGrid.VerticalAlignment = VerticalAlignment.Stretch;
-            //childGrid.Background = new SolidColorBrush(Colors.Black);
-            //Grid.SetColumn(childGrid, 1);
-            //Grid.SetRow(childGrid, 3);
-
-            //grid.Children.Add(txt1);
-            //grid.Children.Add(txt2);
-            //grid.Children.Add(txt3);
-            //grid.Children.Add(txt4);
-            //grid.Children.Add(txt5);
-            //grid.Children.Add(txt6);
-            //grid.Children.Add(txt7);
-            //grid.Children.Add(txt8);
-            //grid.Children.Add(childGrid);
-            //grid.Background = new SolidColorBrush(Colors.Bisque);
-
-            this.Content = grid;
         }
     }
 }

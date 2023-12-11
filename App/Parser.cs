@@ -266,15 +266,10 @@ namespace EMark
 
         public BaseBlock Parse(Stack<Token> tokens)
         {
-            try
-            {
-                Block = Process(null, tokens);
-                ValidateTree(Block);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+
+            Block = Process(null, tokens);
+            ValidateTree(Block);
+
             return Block;
         }
 

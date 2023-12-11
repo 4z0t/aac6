@@ -218,7 +218,6 @@ namespace App
             {
                 Parser parser = new Parser();
                 BaseBlock block = parser.Process(null, tokens);
-                Console.WriteLine(block);
                 Grid grid = RenderBlock(block, new LayoutContext(HorizontalAlignment.Left, VerticalAlignment.Top));
                 grid.HorizontalAlignment = HorizontalAlignment.Left;
                 grid.VerticalAlignment = VerticalAlignment.Top;

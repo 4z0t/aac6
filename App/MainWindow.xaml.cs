@@ -230,8 +230,8 @@ namespace App
             {
                 TextBlock info = new TextBlock();
                 info.HorizontalAlignment = HorizontalAlignment.Center;
-                info.VerticalAlignment = VerticalAlignment.Center;
-                info.FontSize = 20;
+                info.VerticalAlignment = VerticalAlignment.Top;
+                info.FontSize = 16;
                 info.FontWeight = FontWeights.Bold;
                 info.Text = ex.ToString();
                 EMark.Children.Add(info);

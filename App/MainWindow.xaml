@@ -10,9 +10,9 @@
         <Grid x:Name="EMark" Margin="0,0,0,157">
         </Grid>
         <Grid>
-            <Button DockPanel.Dock="Left" Click="Button_Click"   HorizontalAlignment="Left" Width="37" Height="287" VerticalAlignment="Bottom">Parse</Button>
+            <Button DockPanel.Dock="Left" Click="Button_Click"   HorizontalAlignment="Left" Width="37" Height="521" VerticalAlignment="Bottom">Parse</Button>
             <TextBlock x:Name="Error" DockPanel.Dock="Bottom" Foreground="Red" />
-            <TextBox x:Name="Program" AcceptsReturn="True" AcceptsTab="True" TextChanged="Program_TextChanged" Height="287" Width="748" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,0" FontSize="18"/>
+            <TextBox x:Name="Program" AcceptsReturn="True" AcceptsTab="True" TextChanged="Program_TextChanged" Height="521" Width="748" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,0" FontSize="18"/>
         </Grid>
     </Grid>
 

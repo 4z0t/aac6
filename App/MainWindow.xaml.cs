@@ -25,13 +25,13 @@ namespace App
 
         public string EMARKS = @"
         <block rows = 3>
-            <row valign=center halign=center height = 20>
+            <row valign=center halign=center height = 50>
                 Hellosad as d dsa d
             </row>
             <row columns = 2 halign=center valign=bottom height=100>
-                <column valign = bottom width = 100>
+                <column valign = bottom width = 200>
                     <block rows=1>
-                        <row halign= left>
+                        <row halign= center valign=bottom bgcolor=black textcolor = green>
                             col 1
                         </row>
                     </block>
@@ -62,16 +62,71 @@ namespace App
             }
         }
 
-        public Grid RenderBlock(BaseBlock block)
+        public struct LayoutContext
+        {
+
+            public LayoutContext(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
+            {
+                HorizontalAlignment = horizontalAlignment; VerticalAlignment = verticalAlignment;
+            }
+
+            public LayoutContext(LayoutContext layout) : this(layout.HorizontalAlignment, layout.VerticalAlignment)
+            {
+            }
+
+            public HorizontalAlignment HorizontalAlignment { get; set; }
+            public VerticalAlignment VerticalAlignment { get; set; }
+
+            public void HAlignFromString(string halign)
+            {
+                switch (halign)
+                {
+                    case "left":
+                        HorizontalAlignment = HorizontalAlignment.Left;
+                        break;
+                    case "right":
+                        HorizontalAlignment = HorizontalAlignment.Right;
+                        break;
+                    case "center":
+                        HorizontalAlignment = HorizontalAlignment.Center;
+                        break;
+                    default:
+                        throw new Exception("Invalid Halign value");
+                }
+            }
+
+            public void VAlignFromString(string valign)
+            {
+                switch (valign)
+                {
+                    case "top":
+                        VerticalAlignment = VerticalAlignment.Top;
+                        break;
+                    case "bottom":
+                        VerticalAlignment = VerticalAlignment.Bottom;
+                        break;
+                    case "center":
+                        VerticalAlignment = VerticalAlignment.Center;
+                        break;
+                    default:
+                        throw new Exception("Invalid Valign value");
+                }
+            }
+        }
+
+
+        public Grid RenderBlock(BaseBlock block, LayoutContext context)
         {
             Grid grid = new Grid();
-            grid.ShowGridLines = true;
+            //grid.ShowGridLines = true;
 
             if (block.Rows != 0)
             {
                 for (int i = 0; i < block.Rows; i++)
                 {
-                    grid.RowDefinitions.Add(new RowDefinition());
+                    RowDefinition r = new RowDefinition();
+                    //r.Height = new GridLength(100);
+                    grid.RowDefinitions.Add(r);
                 }
             }
             else if (block.Columns != 0)
@@ -83,52 +138,29 @@ namespace App
             }
             //else
             //    throw new Exception("block must have at least one set of rows or columns");
+            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            grid.VerticalAlignment = VerticalAlignment.Stretch;
             if (block.Type == "block")
             {
-                grid.HorizontalAlignment = HorizontalAlignment.Center;
-                grid.VerticalAlignment = VerticalAlignment.Center;
             }
             else
             {
                 View view = block as View;
                 string valign = view.VAlign;
                 string halign = view.HAlign;
-                if (view.Type == "row" && view.Height != 0)
-                {
-                    grid.Height = view.Height;
-                }
-                else if (view.Type == "column" && view.Width != 0)
-                {
-                    grid.Width = view.Width;
-                }
-                switch (valign)
-                {
-                    case "top":
-                        grid.VerticalAlignment = VerticalAlignment.Top;
-                        break;
-                    case "bottom":
-                        grid.VerticalAlignment = VerticalAlignment.Bottom;
-                        break;
-                    case "center":
-                        grid.VerticalAlignment = VerticalAlignment.Center;
-                        break;
-                    default:
-                        throw new Exception("Invalid Valign value");
-                }
-                switch (halign)
-                {
-                    case "left":
-                        grid.HorizontalAlignment = HorizontalAlignment.Left;
-                        break;
-                    case "right":
-                        grid.HorizontalAlignment = HorizontalAlignment.Right;
-                        break;
-                    case "center":
-                        grid.HorizontalAlignment = HorizontalAlignment.Center;
-                        break;
-                    default:
-                        throw new Exception("Invalid Halign value");
-                }
+                context.HAlignFromString(halign);
+                context.VAlignFromString(valign);
+
+                //if (view.Type == "row" && view.Height != 0)
+                //{
+                //    grid.Height = view.Height;
+                //}
+                //else if (view.Type == "column" && view.Width != 0)
+                //{
+                //    grid.Width = view.Width;
+                //}
+
+
                 if (view.Text != null)
                 {
                     TextBlock text = new TextBlock();
@@ -140,7 +172,8 @@ namespace App
                     {
                         text.Foreground = new SolidColorBrush(StringToColor(view.TextColor));
                     }
-
+                    text.HorizontalAlignment = context.HorizontalAlignment;
+                    text.VerticalAlignment = context.VerticalAlignment;
                     grid.Children.Add(text);
                 }
                 if (view.BGColor != null)
@@ -154,16 +187,26 @@ namespace App
             {
                 foreach (BaseBlock child in block.Children)
                 {
-                    Grid childGrid = RenderBlock(child);
+                    Grid childGrid = RenderBlock(child, new LayoutContext(context));
                     if (block.Rows != 0)
                     {
                         Grid.SetRow(childGrid, index);
                         Grid.SetColumn(childGrid, 0);
+                        if (child is View view)
+                        {
+                            if (view.Height != 0)
+                                grid.RowDefinitions[index].Height = new GridLength(view.Height);
+                        }
                     }
                     else if (block.Columns != 0)
                     {
                         Grid.SetRow(childGrid, 0);
                         Grid.SetColumn(childGrid, index);
+                        if (child is View view)
+                        {
+                            if (view.Width != 0)
+                                grid.ColumnDefinitions[index].Width = new GridLength(view.Width);
+                        }
                     }
                     grid.Children.Add(childGrid);
 
@@ -185,7 +228,11 @@ namespace App
                 Parser parser = new Parser();
                 BaseBlock block = parser.Process(null, tokens);
                 Console.WriteLine(block);
-                Grid grid = RenderBlock(block);
+                Grid grid = RenderBlock(block, new LayoutContext(HorizontalAlignment.Left, VerticalAlignment.Top));
+                grid.HorizontalAlignment = HorizontalAlignment.Left;
+                grid.VerticalAlignment = VerticalAlignment.Top;
+                grid.Width = 800;
+                grid.Height = 240;
                 this.Content = grid;
             }
             catch (Exception ex)

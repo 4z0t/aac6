@@ -123,8 +123,9 @@ namespace App
         public Grid RenderBlock(BaseBlock block, LayoutContext context)
         {
             Grid grid = new Grid();
-            //grid.ShowGridLines = true;
-
+            Rectangle rect = new Rectangle();
+            rect.Stroke = new SolidColorBrush(Colors.Black);
+            grid.Children.Add(rect);
             if (block.Rows != 0)
             {
                 for (int i = 0; i < block.Rows; i++)
